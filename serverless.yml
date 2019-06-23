@@ -1,0 +1,28 @@
+service: scryfall-telegram
+provider:
+  name: aws
+  runtime: rust
+  region: eu-west-1
+  memorySize: 128
+  timeout: 10
+
+  environment:
+    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+
+plugins:
+  - serverless-rust
+
+# creates one artifact for each function
+package:
+  individually: true
+
+functions:
+  test:
+    # handler value syntax is `{cargo-package-name}.{bin-name}`
+    # or `{cargo-package-name}` for short when you are building a
+    # default bin for a given package.
+    handler: scryfall-telegram-rs-serverless
+    events:
+      - http:
+          path: /${env:WEBHOOK_SECRET}
+          method: POST

@@ -1,0 +1,5 @@
+/target
+**/*.rs.bk
+.serverless/
+node_modules/
+.envrc
