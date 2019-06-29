@@ -22,8 +22,8 @@ pub fn search_results_to_inline_query_response(
 
 fn scryfall_card_to_inline_article(card: &Card) -> InlineQueryResultArticle {
     let thumbnail = match &card.image_uris {
-        Some(uris) => uris["small"].clone(),
-        None => String::from(""),
+        Some(uris) => uris.get("art_crop").or(uris.get("small")).cloned(),
+        None => None,
     };
 
     InlineQueryResultArticle {
@@ -32,7 +32,7 @@ fn scryfall_card_to_inline_article(card: &Card) -> InlineQueryResultArticle {
         title: card.name.clone(),
         url: Some(card.scryfall_uri.clone()),
         description: Some(card.oracle_text.clone().unwrap_or(card.type_line.clone())),
-        thumb_url: Some(thumbnail),
+        thumb_url: thumbnail,
         hide_url: Some(true),
         input_message_content: InputTextMessageContent {
             message_text: card.scryfall_uri.clone(),
