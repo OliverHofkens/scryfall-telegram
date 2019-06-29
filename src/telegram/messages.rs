@@ -24,7 +24,7 @@ pub struct TextMessage {
     pub chat: Chat,
     pub message_id: i64,
     pub from: Option<User>,
-    pub text: String,
+    pub text: Option<String>,
 }
 
 #[derive(Deserialize)]
