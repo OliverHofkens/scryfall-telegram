@@ -2,11 +2,12 @@ use std::error::Error;
 
 use lambda_http::{lambda, Body, IntoResponse, Request, Response};
 use lambda_runtime::{error::HandlerError, Context};
-use scryfall::api::cards_search;
+use regex::Regex;
+use scryfall::api::{cards_search, single_card_image};
 use serde_json;
 use telegram::{
     inbound::{MessageEntityType, TelegramUpdate},
-    outbound::{ParseMode, SendMessage},
+    outbound::{InputMediaPhoto, ParseMode, SendMediaGroup, SendMessage, SendPhoto},
 };
 
 mod convert;
@@ -55,6 +56,9 @@ fn handle_inline_query(update: &TelegramUpdate) {
 fn handle_message(update: &TelegramUpdate) {
     let msg = update.message.as_ref().unwrap();
 
+    // Handle any [[ ]] references before checking for commands etc.
+    handle_plaintext(update);
+
     if msg.entities.is_none() {
         return;
     }
@@ -86,8 +90,10 @@ fn handle_message(update: &TelegramUpdate) {
                 text: "Welcome to ScryfallBot!
 
 *Usage*
-ScryfallBot is an _inline_ bot, meaning you just tag @ScryfallBot and start typing while the results show up above your keyboard.
+ScryfallBot works in both _inline_ mode and in active mode.
+Inline mode means you just tag @ScryfallBot and start typing while the results show up above your keyboard.
 Tapping a result will send it in your chat. All Scryfall syntax is supported, for a full overview, see [the Scryfall syntax docs](https://scryfall.com/docs/syntax)
+Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat.
 
 *Questions, Improvements, Changes*
 ScryfallBot is open source and lives on [Github here](https://github.com/OliverHofkens/scryfall-telegram-rs-serverless).
@@ -101,5 +107,48 @@ If you have a great idea, feature request, or bug report, feel free to [open an 
         } else {
             println!("Unsupported command: {}", command_txt);
         }
+    }
+}
+
+fn handle_plaintext(update: &TelegramUpdate) {
+    let msg = &update.message.as_ref().unwrap();
+    let msg_text = msg.text.to_owned();
+
+    if msg_text.is_none() {
+        return;
+    }
+    let msg_text = msg_text.unwrap();
+
+    let re = Regex::new(r"\[\[(.+?)\]\]").unwrap();
+
+    let results: Vec<String> = re
+        .captures_iter(&msg_text)
+        .filter_map(|cap| single_card_image(cap.get(1).unwrap().as_str()))
+        .collect();
+
+    if results.len() == 0 {
+        return;
+    }
+
+    if results.len() == 1 {
+        telegram::api::send_photo(&SendPhoto {
+            chat_id: msg.chat.id.clone(),
+            photo: results[0].to_owned(),
+            caption: None,
+            parse_mode: None,
+        });
+    } else {
+        telegram::api::send_multi_photo(&SendMediaGroup {
+            chat_id: msg.chat.id.clone(),
+            media: results
+                .iter()
+                .map(|x| InputMediaPhoto {
+                    media_type: String::from("photo"),
+                    media: x.to_owned(),
+                    caption: None,
+                    parse_mode: None,
+                })
+                .collect(),
+        })
     }
 }

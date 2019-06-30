@@ -4,6 +4,7 @@ use serde::Serialize;
 pub struct SendMessage {
     pub chat_id: i64,
     pub text: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<ParseMode>,
     pub disable_web_page_preview: Option<bool>,
 }
@@ -38,4 +39,31 @@ pub struct InlineQueryResultArticle {
 pub struct InputTextMessageContent {
     pub message_text: String,
     pub disable_web_page_preview: bool,
+}
+
+#[derive(Serialize)]
+pub struct SendPhoto {
+    pub chat_id: i64,
+    pub photo: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<ParseMode>,
+}
+
+#[derive(Serialize)]
+pub struct SendMediaGroup {
+    pub chat_id: i64,
+    pub media: Vec<InputMediaPhoto>,
+}
+
+#[derive(Serialize)]
+pub struct InputMediaPhoto {
+    #[serde(rename = "type")]
+    pub media_type: String,
+    pub media: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<ParseMode>,
 }

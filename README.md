@@ -2,16 +2,21 @@
 
 *Note: Spritual successor to [Scryfall_Telegram](https://github.com/OliverHofkens/Scryfall_Telegram)*
 
-Scryfall-telegram-rs is an inline [Telegram](https://telegram.org/) bot that uses
+Scryfall-telegram-rs is both an inline and always-on [Telegram](https://telegram.org/) bot that uses
 [Scryfall](https://scryfall.com/)'s API to search Magic: The Gathering cards.
 
-All Scryfall syntax that can be understood by the API can be used. A full reference
+All Scryfall syntax that can be understood by the API can be used in inline mode. A full reference
 can be found here: [Scryfall Syntax Reference](https://scryfall.com/docs/reference).
 
-Some examples:
+For always-on mode, add ScryfallBot to your chat and mark cards to be looked up with `[[ card you want to find ]]`.
+
+Some inline examples:
 - Search a card by name: `@ScryfallBot Bolas`
 - Search an instant that can be played in an Esper EDH deck: `@ScryfallBot id<=esper t:instant`
 - Search cards that enter the battlefield tapped: `@ScryfallBot o:"~ enters the battlefield tapped"`
+
+Some always-on examples:
+- Does anyone have an extra [[ nyx fleece ram ]] or [[ bolas dragon god ]] ?
 
 ## Running it yourself
 
