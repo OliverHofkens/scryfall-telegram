@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct User {
@@ -19,12 +19,41 @@ pub struct Chat {
 }
 
 #[derive(Deserialize)]
-pub struct TextMessage {
+pub struct Message {
     pub date: i64,
     pub chat: Chat,
     pub message_id: i64,
     pub from: Option<User>,
     pub text: Option<String>,
+    pub entities: Option<Vec<MessageEntity>>,
+}
+
+#[derive(Deserialize)]
+pub struct MessageEntity {
+    // Only relevant fields
+    #[serde(rename = "type")]
+    pub entity_type: MessageEntityType,
+    pub offset: i32,
+    pub length: i32,
+    pub user: Option<User>,
+}
+
+#[derive(Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum MessageEntityType {
+    Mention,
+    Hashtag,
+    Cashtag,
+    BotCommand,
+    Url,
+    Email,
+    PhoneNumber,
+    Bold,
+    Italic,
+    Code,
+    Pre,
+    TextLink,
+    TextMention,
 }
 
 #[derive(Deserialize)]
@@ -38,6 +67,20 @@ pub struct InlineQuery {
 #[derive(Deserialize)]
 pub struct TelegramUpdate {
     pub update_id: i64,
-    pub message: Option<TextMessage>,
+    pub message: Option<Message>,
     pub inline_query: Option<InlineQuery>,
+}
+
+#[derive(Serialize)]
+pub struct SendMessage {
+    pub chat_id: i64,
+    pub text: String,
+    pub parse_mode: Option<ParseMode>,
+    pub disable_web_page_preview: Option<bool>,
+}
+
+#[derive(Serialize)]
+pub enum ParseMode {
+    Markdown,
+    HTML,
 }

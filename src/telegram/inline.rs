@@ -15,6 +15,7 @@ pub struct InlineQueryResultArticle {
     pub input_message_content: InputTextMessageContent,
     pub url: Option<String>,
     pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb_url: Option<String>,
     pub hide_url: Option<bool>,
 }
