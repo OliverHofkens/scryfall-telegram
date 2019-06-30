@@ -4,7 +4,10 @@ use lambda_http::{lambda, Body, IntoResponse, Request, Response};
 use lambda_runtime::{error::HandlerError, Context};
 use scryfall::api::cards_search;
 use serde_json;
-use telegram::messages::{MessageEntityType, ParseMode, SendMessage, TelegramUpdate};
+use telegram::{
+    inbound::{MessageEntityType, TelegramUpdate},
+    outbound::{ParseMode, SendMessage},
+};
 
 mod convert;
 mod scryfall;

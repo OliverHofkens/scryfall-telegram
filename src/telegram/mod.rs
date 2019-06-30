@@ -1,3 +1,3 @@
-pub mod messages;
-pub mod inline;
 pub mod api;
+pub mod inbound;
+pub mod outbound;

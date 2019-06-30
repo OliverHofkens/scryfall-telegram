@@ -1,6 +1,20 @@
 use serde::Serialize;
 
 #[derive(Serialize)]
+pub struct SendMessage {
+    pub chat_id: i64,
+    pub text: String,
+    pub parse_mode: Option<ParseMode>,
+    pub disable_web_page_preview: Option<bool>,
+}
+
+#[derive(Serialize)]
+pub enum ParseMode {
+    Markdown,
+    HTML,
+}
+
+#[derive(Serialize)]
 pub struct AnswerInlineQuery {
     pub inline_query_id: String,
     pub results: Vec<InlineQueryResultArticle>,

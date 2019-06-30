@@ -70,17 +70,3 @@ pub struct TelegramUpdate {
     pub message: Option<Message>,
     pub inline_query: Option<InlineQuery>,
 }
-
-#[derive(Serialize)]
-pub struct SendMessage {
-    pub chat_id: i64,
-    pub text: String,
-    pub parse_mode: Option<ParseMode>,
-    pub disable_web_page_preview: Option<bool>,
-}
-
-#[derive(Serialize)]
-pub enum ParseMode {
-    Markdown,
-    HTML,
-}

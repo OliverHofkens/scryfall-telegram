@@ -1,5 +1,5 @@
 use crate::scryfall::models::{Card, SearchResult};
-use crate::telegram::inline::{
+use crate::telegram::outbound::{
     AnswerInlineQuery, InlineQueryResultArticle, InputTextMessageContent,
 };
 

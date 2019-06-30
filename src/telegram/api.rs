@@ -2,8 +2,7 @@ use reqwest;
 use reqwest::Url;
 use std::env;
 
-use crate::telegram::inline::AnswerInlineQuery;
-use crate::telegram::messages::SendMessage;
+use crate::telegram::outbound::{AnswerInlineQuery, SendMessage};
 
 const BASE_URL: &str = "https://api.telegram.org/";
 
