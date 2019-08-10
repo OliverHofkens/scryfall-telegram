@@ -18,4 +18,11 @@ pub struct Card {
     pub oracle_text: Option<String>,
     pub scryfall_uri: String,
     pub image_uris: Option<HashMap<String, String>>,
+    pub card_faces: Option<Vec<Face>>,
+}
+
+/// Unused fields are omitted
+#[derive(Deserialize)]
+pub struct Face {
+    pub image_uris: Option<HashMap<String, String>>,
 }

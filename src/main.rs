@@ -3,7 +3,7 @@ use std::error::Error;
 use lambda_http::{lambda, Body, IntoResponse, Request, Response};
 use lambda_runtime::{error::HandlerError, Context};
 use regex::Regex;
-use scryfall::api::{cards_search, single_card_image};
+use scryfall::api::{cards_search, single_card_image_with_fallback};
 use serde_json;
 use telegram::{
     inbound::{MessageEntityType, TelegramUpdate},
@@ -123,7 +123,7 @@ fn handle_plaintext(update: &TelegramUpdate) {
 
     let results: Vec<String> = re
         .captures_iter(&msg_text)
-        .filter_map(|cap| single_card_image(cap.get(1).unwrap().as_str()))
+        .filter_map(|cap| single_card_image_with_fallback(cap.get(1).unwrap().as_str()))
         .collect();
 
     if results.len() == 0 {
