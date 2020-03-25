@@ -13,6 +13,7 @@ pub fn cards_search(query: &str, order: &str, page: i32) -> reqwest::Result<Sear
         .query_pairs_mut()
         .append_pair("q", query)
         .append_pair("order", order)
+        .append_pair("include_multilingual", "true")
         .append_pair("page", &page.to_string());
 
     let response = reqwest::get(endpoint)?.error_for_status();
@@ -73,9 +74,9 @@ pub fn single_card_image_with_fallback(query: &str) -> Option<String> {
                 match images {
                     Some(img) => {
                         if img.contains_key("large") {
-                            return Some(img["large"].clone())
+                            return Some(img["large"].clone());
                         }
-                        continue
+                        continue;
                     }
                     _ => continue,
                 }
