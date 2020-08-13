@@ -22,7 +22,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn my_handler(event: Request, _context: Context) -> Result<impl IntoResponse, HandlerError> {
     let msg_body = event.into_body();
-    println!("{:?}", msg_body);
 
     let maybe_update: Option<TelegramUpdate> = match msg_body {
         Body::Text(e) => Some(serde_json::from_str(&e).unwrap()),
