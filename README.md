@@ -8,7 +8,7 @@ Scryfall-telegram-rs is both an inline and always-on [Telegram](https://telegram
 All Scryfall syntax that can be understood by the API can be used in inline mode. A full reference
 can be found here: [Scryfall Syntax Reference](https://scryfall.com/docs/reference).
 
-For always-on mode, add ScryfallBot to your chat and mark cards to be looked up with `[[ card you want to find ]]`.
+For always-on mode, add [ScryfallBot](t.me/ScryfallBot) to your chat and mark cards to be looked up with `[[ card you want to find ]]`.
 
 Some inline examples:
 - Search a card by name: `@ScryfallBot Bolas`
@@ -20,7 +20,7 @@ Some always-on examples:
 
 ## Running it yourself
 
-This bot lives on Telegram: [t.me/ScryfallBot](t.me/ScryfallBot),
+This bot lives on Telegram: [t.me/ScryfallBot](t.me/ScryfallBot) (Beta version: [t.me/ScryfallBetaBot](t.me/ScryfallBetaBot) ),
 but you can easily run a copy of it yourself:
 
 ### Requirements
