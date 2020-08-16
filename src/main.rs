@@ -45,6 +45,7 @@ fn telegram_webhook_handler(
 
 fn handle_inline_query(update: &TelegramUpdate) {
     let q = update.inline_query.as_ref().unwrap();
+    println!("Inline Query: {}", q.query);
 
     if q.query.len() == 0 {
         return;
@@ -57,6 +58,7 @@ fn handle_inline_query(update: &TelegramUpdate) {
 
 fn handle_message(update: &TelegramUpdate) {
     let msg = update.message.as_ref().unwrap();
+    println!("Message: {:?}", msg.text);
 
     // Handle any [[ ]] references before checking for commands etc.
     handle_plaintext(update);
