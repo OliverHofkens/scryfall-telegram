@@ -125,6 +125,7 @@ fn handle_plaintext(update: &TelegramUpdate) {
 
     let results: Vec<String> = re
         .captures_iter(&msg_text)
+        .take(10)
         .filter_map(|cap| single_card_image_with_fallback(cap.get(1).unwrap().as_str()))
         .collect();
 
