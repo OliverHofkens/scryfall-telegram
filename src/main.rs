@@ -15,12 +15,15 @@ mod scryfall;
 mod telegram;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    lambda!(my_handler);
+    lambda!(telegram_webhook_handler);
 
     Ok(())
 }
 
-fn my_handler(event: Request, _context: Context) -> Result<impl IntoResponse, HandlerError> {
+fn telegram_webhook_handler(
+    event: Request,
+    _context: Context,
+) -> Result<impl IntoResponse, HandlerError> {
     let msg_body = event.into_body();
 
     let maybe_update: Option<TelegramUpdate> = match msg_body {

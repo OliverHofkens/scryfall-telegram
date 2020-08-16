@@ -1,4 +1,11 @@
 service: scryfall-telegram
+
+custom:
+    currentStage: ${opt:stage, self:provider.stage}
+    environments:
+        staging: STAG
+        production: PROD
+
 provider:
   name: aws
   runtime: rust
@@ -6,9 +13,10 @@ provider:
   memorySize: 128
   timeout: 10
   reservedConcurrency: 3
+  stage: staging
 
   environment:
-    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN_${self:custom.environments.${self:custom.currentStage}}}
 
 plugins:
   - serverless-rust
@@ -18,7 +26,7 @@ package:
   individually: true
 
 functions:
-  test:
+  handle_telegram_webhook:
     # handler value syntax is `{cargo-package-name}.{bin-name}`
     # or `{cargo-package-name}` for short when you are building a
     # default bin for a given package.

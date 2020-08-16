@@ -30,8 +30,8 @@ but you can easily run a copy of it yourself:
 
 ### Building
 - Ensure these 2 variables are in your environment:
-    - TELEGRAM_BOT_TOKEN: The token given to you by the [The Botfather](https://core.telegram.org/bots#6-botfather)
+    - TELEGRAM_BOT_TOKEN_PROD: The token given to you by the [The Botfather](https://core.telegram.org/bots#6-botfather)
     - WEBHOOK_SECRET: A secret you can choose yourself. It will be used in your webhook URL.
-- Run `serverless deploy` to build and deploy.
-- Run `python3 scripts/register_webhook.py {webhook_url}` to register your webhook on Telegram
+- Run `serverless deploy --stage production` to build and deploy.
+- Run `python3 scripts/register_webhook.py production {webhook_url}` to register your webhook on Telegram
 - You're live!
