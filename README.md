@@ -9,6 +9,7 @@ All Scryfall syntax that can be understood by the API can be used in inline mode
 can be found here: [Scryfall Syntax Reference](https://scryfall.com/docs/reference).
 
 For always-on mode, add [ScryfallBot](https://t.me/ScryfallBot) to your chat and mark cards to be looked up with `[[ card you want to find ]]`.
+You can find a specific printing or limit the search to a specific set by adding the 3 letter set code like this: `[[ my card | SET ]]`
 
 Some inline examples:
 - Search a card by name: `@ScryfallBot Bolas`
@@ -16,7 +17,8 @@ Some inline examples:
 - Search cards that enter the battlefield tapped: `@ScryfallBot o:"~ enters the battlefield tapped"`
 
 Some always-on examples:
-- Does anyone have an extra [[ nyx fleece ram ]] or [[ bolas dragon god ]] ?
+- Does anyone have an extra [[ nyx fleece ram ]] or [[ bolas dragon god ]] ?  
+- Which is best: [[Bottle Gnomes|TMP]] or [[Bottle Gnomes]] ?
 
 ## Running it yourself
 

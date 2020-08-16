@@ -97,7 +97,8 @@ fn handle_message(update: &TelegramUpdate) {
 ScryfallBot works in both _inline_ mode and in active mode.
 Inline mode means you just tag @ScryfallBot and start typing while the results show up above your keyboard.
 Tapping a result will send it in your chat. All Scryfall syntax is supported, for a full overview, see [the Scryfall syntax docs](https://scryfall.com/docs/syntax)
-Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat.
+Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat. 
+You can find specific printings or limit the search to a set by adding the set code like this: [[ my card lookup | SET ]].
 
 *Questions, Improvements, Changes*
 ScryfallBot is open source and lives on [Github here](https://github.com/OliverHofkens/scryfall-telegram-rs-serverless).
