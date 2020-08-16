@@ -11,7 +11,7 @@ provider:
   runtime: rust
   region: eu-west-1
   memorySize: 128
-  timeout: 10
+  timeout: 30
   reservedConcurrency: 3
   stage: staging
 
