@@ -123,12 +123,17 @@ fn handle_plaintext(update: &TelegramUpdate) {
     }
     let msg_text = msg_text.unwrap();
 
-    let re = Regex::new(r"\[\[(.+?)\]\]").unwrap();
+    let re = Regex::new(r"\[\[\s*([^|]+?)(?:\s*\|\s*(\w{3}))?\s*\]\]").unwrap();
 
     let results: Vec<String> = re
         .captures_iter(&msg_text)
         .take(10)
-        .filter_map(|cap| single_card_image_with_fallback(cap.get(1).unwrap().as_str()))
+        .filter_map(|cap| {
+            single_card_image_with_fallback(
+                cap.get(1).unwrap().as_str(),
+                cap.get(2).map(|c| c.as_str()),
+            )
+        })
         .collect();
 
     if results.len() == 0 {
