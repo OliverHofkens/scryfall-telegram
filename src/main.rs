@@ -97,7 +97,8 @@ fn handle_message(update: &TelegramUpdate) {
 ScryfallBot works in both _inline_ mode and in active mode.
 Inline mode means you just tag @ScryfallBot and start typing while the results show up above your keyboard.
 Tapping a result will send it in your chat. All Scryfall syntax is supported, for a full overview, see [the Scryfall syntax docs](https://scryfall.com/docs/syntax)
-Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat.
+Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat. 
+You can find specific printings or limit the search to a set by adding the set code like this: [[ my card lookup | SET ]].
 
 *Questions, Improvements, Changes*
 ScryfallBot is open source and lives on [Github here](https://github.com/OliverHofkens/scryfall-telegram-rs-serverless).
@@ -123,12 +124,17 @@ fn handle_plaintext(update: &TelegramUpdate) {
     }
     let msg_text = msg_text.unwrap();
 
-    let re = Regex::new(r"\[\[(.+?)\]\]").unwrap();
+    let re = Regex::new(r"\[\[\s*([^|]+?)(?:\s*\|\s*(\w{3}))?\s*\]\]").unwrap();
 
     let results: Vec<String> = re
         .captures_iter(&msg_text)
         .take(10)
-        .filter_map(|cap| single_card_image_with_fallback(cap.get(1).unwrap().as_str()))
+        .filter_map(|cap| {
+            single_card_image_with_fallback(
+                cap.get(1).unwrap().as_str(),
+                cap.get(2).map(|c| c.as_str()),
+            )
+        })
         .collect();
 
     if results.len() == 0 {
