@@ -1,5 +1,6 @@
 use reqwest;
 use reqwest::{StatusCode, Url};
+use strsim::levenshtein;
 
 use crate::scryfall::models::{Card, SearchResult};
 
@@ -82,8 +83,9 @@ fn image_for_card(card: &Card, name_of_interest: &str, preferred_format: &str) -
         Some(faces) => {
             // If the card has multiple faces, return the face that matches closest to what the user
             // expects:
-            let wanted_face = &faces[0];
-
+            let wanted_face = faces
+                .iter()
+                .min_by_key(|f| levenshtein(&f.name, name_of_interest))?;
             &wanted_face.image_uris
         }
     }
@@ -129,9 +131,12 @@ mod tests {
 
     #[test]
     fn test_get_double_faced_card_by_name() {
-        let result = single_card_image("Insectile Aberration", None).unwrap();
+        let result_front = single_card_image("Delver of Secrets", None).unwrap();
+        let result_back = single_card_image("Insectile Aberration", None).unwrap();
 
-        assert_eq!(result.is_some(), true);
+        assert_eq!(result_front.is_some(), true);
+        assert_eq!(result_back.is_some(), true);
+        assert_ne!(result_front.unwrap(), result_back.unwrap())
     }
 
     #[test]
