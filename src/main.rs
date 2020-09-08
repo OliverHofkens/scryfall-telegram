@@ -134,6 +134,8 @@ fn handle_plaintext(update: &TelegramUpdate) {
                 cap.get(1).unwrap().as_str(),
                 cap.get(2).map(|c| c.as_str()),
             )
+            .ok()
+            .flatten()
         })
         .collect();
 

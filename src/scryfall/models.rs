@@ -24,5 +24,6 @@ pub struct Card {
 /// Unused fields are omitted
 #[derive(Deserialize)]
 pub struct Face {
+    pub name: String,
     pub image_uris: Option<HashMap<String, String>>,
 }
