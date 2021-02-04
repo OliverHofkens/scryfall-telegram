@@ -1,3 +1,4 @@
+---
 service: scryfall-telegram
 
 custom:
@@ -7,31 +8,31 @@ custom:
         production: PROD
 
 provider:
-  name: aws
-  runtime: rust
-  region: eu-west-1
-  memorySize: 128
-  timeout: 30
-  reservedConcurrency: 3
-  stage: staging
+    name: aws
+    runtime: rust
+    region: eu-west-1
+    memorySize: 128
+    timeout: 30
+    reservedConcurrency: 3
+    stage: staging
 
-  environment:
-      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN_${self:custom.environments.${self:custom.currentStage}}}
+    environment:
+        TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN_${self:custom.environments.${self:custom.currentStage}}}
 
 plugins:
-  - serverless-rust
+    - serverless-rust
 
 # creates one artifact for each function
 package:
-  individually: true
+    individually: true
 
 functions:
-  handle_telegram_webhook:
-    # handler value syntax is `{cargo-package-name}.{bin-name}`
-    # or `{cargo-package-name}` for short when you are building a
-    # default bin for a given package.
-    handler: scryfall-telegram-rs-serverless
-    events:
-      - http:
-          path: /${env:WEBHOOK_SECRET}
-          method: POST
+    handle_telegram_webhook:
+        # handler value syntax is `{cargo-package-name}.{bin-name}`
+        # or `{cargo-package-name}` for short when you are building a
+        # default bin for a given package.
+        handler: scryfall-telegram-rs-serverless
+        events:
+            - http:
+              path: /${env:WEBHOOK_SECRET}
+              method: POST
