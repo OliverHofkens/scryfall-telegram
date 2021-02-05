@@ -34,5 +34,5 @@ functions:
         handler: scryfall-telegram-rs-serverless
         events:
             - http:
-              path: /${env:WEBHOOK_SECRET}
-              method: POST
+                  path: /${env:WEBHOOK_SECRET}
+                  method: POST
