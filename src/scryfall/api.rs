@@ -2,7 +2,8 @@ use reqwest;
 use reqwest::{StatusCode, Url};
 use strsim::levenshtein;
 
-use crate::scryfall::models::{Card, SearchResult};
+use crate::scryfall::models::{Card, Face, SearchResult};
+use std::collections::HashMap;
 
 const BASE_URL: &str = "https://api.scryfall.com/";
 
@@ -77,19 +78,25 @@ pub fn single_card_image_with_fallback(
     }
 }
 
+fn _image_for_face_with_name<'a>(
+    faces: &'a Vec<Face>,
+    name: &str,
+) -> Option<&'a HashMap<String, String>> {
+    let wanted_face = faces.iter().min_by_key(|f| levenshtein(&f.name, name))?;
+    wanted_face.image_uris.as_ref()
+}
+
 fn image_for_card(card: &Card, name_of_interest: &str, preferred_format: &str) -> Option<String> {
-    let images = match &card.card_faces {
-        None => &card.image_uris,
-        Some(faces) => {
-            // If the card has multiple faces, return the face that matches closest to what the user
-            // expects:
-            let wanted_face = faces
-                .iter()
-                .min_by_key(|f| levenshtein(&f.name, name_of_interest))?;
-            &wanted_face.image_uris
-        }
-    }
-    .as_ref()?;
+    // NOTE: Split cards, adventures, etc. have multiple `card_faces`, but the
+    // image only exists on the root level. Meanwhile, double faced cards have
+    // images per `card_face`. We _could_ check on the `layout` field, but for
+    // now it seems sensible to just check where `image_uris` is found.
+    let face_images = card
+        .card_faces
+        .as_ref()
+        .and_then(|f| _image_for_face_with_name(f, name_of_interest));
+
+    let images = &card.image_uris.as_ref().or(face_images)?;
 
     images
         .get(preferred_format)
@@ -137,6 +144,28 @@ mod tests {
         assert_eq!(result_front.is_some(), true);
         assert_eq!(result_back.is_some(), true);
         assert_ne!(result_front.unwrap(), result_back.unwrap())
+    }
+
+    #[test]
+    fn test_get_split_adventure_card_by_name() {
+        let result_adv = single_card_image("Stomp", None).unwrap();
+        let result_creature = single_card_image("Bonecrusher Giant", None).unwrap();
+
+        assert_eq!(result_adv.is_some(), true);
+        assert_eq!(result_creature.is_some(), true);
+        assert_eq!(result_adv.unwrap(), result_creature.unwrap())
+    }
+
+    #[test]
+    fn test_get_split_card_by_name() {
+        let result_top = single_card_image("Commit", None).unwrap();
+        let result_bottom = single_card_image("Memory", None).unwrap();
+        let result_both = single_card_image("Commit // Memory", None).unwrap();
+
+        assert_eq!(result_top.is_some(), true);
+        assert_eq!(result_bottom.is_some(), true);
+        assert_eq!(result_both.is_some(), true);
+        assert_eq!(result_top.unwrap(), result_bottom.unwrap())
     }
 
     #[test]
