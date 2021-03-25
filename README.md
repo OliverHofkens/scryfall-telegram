@@ -11,6 +11,8 @@ can be found here: [Scryfall Syntax Reference](https://scryfall.com/docs/referen
 For always-on mode, add [ScryfallBot](https://t.me/ScryfallBot) to your chat and mark cards to be looked up with `[[ card you want to find ]]`.
 You can find a specific printing or limit the search to a specific set by adding the 3 letter set code like this: `[[ my card | SET ]]`
 
+NOTE: Currently, the bot needs to be an admin in your chat in order to see messages without being explicitly mentioned...
+
 Some inline examples:
 - Search a card by name: `@ScryfallBot Bolas`
 - Search an instant that can be played in an Esper EDH deck: `@ScryfallBot id<=esper t:instant`
