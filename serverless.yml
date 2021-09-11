@@ -1,5 +1,7 @@
 ---
 service: scryfall-telegram
+variablesResolutionMode: "20210326"
+configValidationMode: error
 
 custom:
     currentStage: ${opt:stage, self:provider.stage}
@@ -7,32 +9,32 @@ custom:
         staging: STAG
         production: PROD
 
+    pythonRequirements:
+        dockerizePip: non-linux
+        slim: true
+
 provider:
     name: aws
-    runtime: rust
+    runtime: python3.8
     region: eu-west-1
     memorySize: 128
-    timeout: 30
-    reservedConcurrency: 3
+    timeout: 25
     stage: staging
 
     environment:
         TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN_${self:custom.environments.${self:custom.currentStage}}}
 
 plugins:
-    - serverless-rust
-
-# creates one artifact for each function
+    - serverless-python-requirements
 package:
-    individually: true
+    patterns:
+        - "!**"
+        - "scryfall_telegram/**"
 
 functions:
     handle_telegram_webhook:
-        # handler value syntax is `{cargo-package-name}.{bin-name}`
-        # or `{cargo-package-name}` for short when you are building a
-        # default bin for a given package.
-        handler: scryfall-telegram-rs-serverless
+        handler: scryfall_telegram.handler.handle_telegram_webhook
         events:
-            - http:
+            - httpApi:
                   path: /${env:WEBHOOK_SECRET}
                   method: POST

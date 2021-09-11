@@ -1,8 +1,6 @@
-# scryfall_telegram_rs #
+# Scryfall Telegram #
 
-*Note: Spritual successor to [Scryfall_Telegram](https://github.com/OliverHofkens/Scryfall_Telegram)*
-
-Scryfall-telegram-rs is both an inline and always-on [Telegram](https://telegram.org/) bot that uses
+Scryfall telegram is both an inline and always-on [Telegram](https://telegram.org/) bot that uses
 [Scryfall](https://scryfall.com/)'s API to search Magic: The Gathering cards.
 
 All Scryfall syntax that can be understood by the API can be used in inline mode. A full reference
@@ -19,7 +17,7 @@ Some inline examples:
 - Search cards that enter the battlefield tapped: `@ScryfallBot o:"~ enters the battlefield tapped"`
 
 Some always-on examples:
-- Does anyone have an extra [[ nyx fleece ram ]] or [[ bolas dragon god ]] ?  
+- Does anyone have an extra [[ nyx fleece ram ]] or [[ bolas dragon god ]] ?
 - Which is best: [[Bottle Gnomes|TMP]] or [[Bottle Gnomes]] ?
 
 ## Running it yourself
@@ -28,7 +26,7 @@ This bot lives on Telegram: [t.me/ScryfallBot](https://t.me/ScryfallBot) (Beta v
 but you can easily run a copy of it yourself:
 
 ### Requirements
-- Rust
+- Python
 - Serverless framework
 - A Serverless provider (the included `serverless.yml` contains config for AWS Lambda)
 
