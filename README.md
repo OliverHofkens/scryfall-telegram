@@ -6,8 +6,9 @@ Scryfall telegram is both an inline and always-on [Telegram](https://telegram.or
 All Scryfall syntax that can be understood by the API can be used in inline mode. A full reference
 can be found here: [Scryfall Syntax Reference](https://scryfall.com/docs/reference).
 
-For always-on mode, add [ScryfallBot](https://t.me/ScryfallBot) to your chat and mark cards to be looked up with `[[ card you want to find ]]`.
+For always-on mode, add [ScryfallBot](https://t.me/ScryfallBot) to your chat and mark cards to be looked up with `[[ card you want to find ]]`. The bot will search up to 10 cards per message.
 You can find a specific printing or limit the search to a specific set by adding the 3 letter set code like this: `[[ my card | SET ]]`
+Starting the query with a '$' or '€' sign will make the bot include pricing information in the image caption: `[[ $ nyx-fleece ram ]]`
 
 NOTE: Currently, the bot needs to be an admin in your chat in order to see messages without being explicitly mentioned...
 
@@ -19,6 +20,7 @@ Some inline examples:
 Some always-on examples:
 - Does anyone have an extra [[ nyx fleece ram ]] or [[ bolas dragon god ]] ?
 - Which is best: [[Bottle Gnomes|TMP]] or [[Bottle Gnomes]] ?
+- How expensive is this invocation? [[ $ Damnation | MP2 ]]
 
 ## Running it yourself
 

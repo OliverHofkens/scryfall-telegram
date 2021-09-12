@@ -140,10 +140,14 @@ Welcome to ScryfallBot!
 
 *Usage*
 ScryfallBot works in both _inline_ mode and in active mode.
+
 Inline mode means you just tag @ScryfallBot and start typing while the results show up above your keyboard.
 Tapping a result will send it in your chat. All Scryfall syntax is supported, for a full overview, see [the Scryfall syntax docs](https://scryfall.com/docs/syntax)
+
 Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat.
+The bot will search up to 10 cards per message.
 You can find specific printings or limit the search to a set by adding the set code like this: [[ my card lookup | SET ]].
+If you start the query with a '$' or '€' sign, the bot will include price information about the card: [[ $ nyx-fleece ]].
 
 NOTE: Currently, the bot needs to be an admin in your chat in order to see messages without being explicitly mentioned...
 
