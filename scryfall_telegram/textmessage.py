@@ -88,11 +88,11 @@ You can find specific printings or limit the search to a set by adding the set c
 NOTE: Currently, the bot needs to be an admin in your chat in order to see messages without being explicitly mentioned...
 
 *Questions, Improvements, Changes*
-ScryfallBot is open source and lives on [Github here](https://github.com/OliverHofkens/scryfall-telegram-rs-serverless).
-If you have a great idea, feature request, or bug report, feel free to [open an issue here](https://github.com/OliverHofkens/scryfall-telegram-rs-serverless/issues)
+ScryfallBot is open source and lives on [Github here](https://github.com/OliverHofkens/scryfall-telegram).
+If you have a great idea, feature request, or bug report, feel free to [open an issue here](https://github.com/OliverHofkens/scryfall-telegram/issues)
 
 *Legal stuff*
-- The code for this bot is licensed under the [MIT License](https://github.com/OliverHofkens/scryfall-telegram-rs-serverless/blob/master/LICENSE), so you're free to change it!
+- The code for this bot is licensed under the [MIT License](https://github.com/OliverHofkens/scryfall-telegram/blob/master/LICENSE), so you're free to change it!
 - I am in no way associated or affiliated with Scryfall, I just use [their fantastic, public API](https://scryfall.com/docs/api).
 
 """
