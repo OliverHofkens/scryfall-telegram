@@ -5,3 +5,7 @@ node_modules/
 .envrc
 package.json
 package-lock.json
+**/__pycache__
+.coverage
+coverage.*
+.python-version
