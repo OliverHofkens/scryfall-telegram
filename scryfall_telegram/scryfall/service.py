@@ -18,7 +18,7 @@ def search_cards(query: str) -> List[Card]:
     return body["data"]
 
 
-def single_card_image(fuzzy_name: str, set_code: Optional[str] = None) -> Optional[str]:
+def single_card(fuzzy_name: str, set_code: Optional[str] = None) -> Optional[Card]:
     resp = cached_scryfall_client().named_card(fuzzy_name, set_code)
 
     if resp.status_code == 404:
@@ -26,14 +26,20 @@ def single_card_image(fuzzy_name: str, set_code: Optional[str] = None) -> Option
 
     resp.raise_for_status()
 
-    body = orjson.loads(resp.content)
-    return _image_for_card(body, fuzzy_name)
+    return orjson.loads(resp.content)
 
 
-def single_card_image_with_search_fallback(
+def single_card_image(fuzzy_name: str, set_code: Optional[str] = None) -> Optional[str]:
+    card = single_card(fuzzy_name, set_code)
+    if card:
+        return image_for_card(card, fuzzy_name)
+    return None
+
+
+def single_card_with_search_fallback(
     query: str, set_code: Optional[str] = None
-) -> Optional[str]:
-    hit = single_card_image(query, set_code)
+) -> Optional[Card]:
+    hit = single_card(query, set_code)
     if hit:
         return hit
 
@@ -42,11 +48,20 @@ def single_card_image_with_search_fallback(
 
     hits = search_cards(full_query)
     if hits:
-        return _image_for_card(hits[0], query)
+        return hits[0]
     return None
 
 
-def _image_for_card(
+def single_card_image_with_search_fallback(
+    query: str, set_code: Optional[str] = None
+) -> Optional[str]:
+    card = single_card_with_search_fallback(query, set_code)
+    if card:
+        return image_for_card(card, query)
+    return None
+
+
+def image_for_card(
     card: Card, name_of_interest: str, preferred_format: str = "normal"
 ) -> Optional[str]:
     img_source = card.get("image_uris")
