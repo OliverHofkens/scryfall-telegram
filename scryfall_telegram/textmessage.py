@@ -1,8 +1,9 @@
 import re
 from itertools import islice
-from typing import List
+from typing import List, Optional, Tuple
 
 from .scryfall import service as scryfall
+from .scryfall.models import Prices
 from .telegram import client as tg_client
 from .telegram.models import (
     InputMediaPhoto,
@@ -27,30 +28,85 @@ def handle_message(msg: Message):
         handle_entities(contents, entities, msg)
 
 
+def _textify_prices(prices: Prices) -> str:
+    rows = []
+    for field, price in prices.items():
+        if not price:
+            continue
+
+        symbol = "🌟" if "foil" in field else ""
+
+        if "usd" in field:
+            market = "TCGplayer" + symbol
+            currency = "$"
+        elif "eur" in field:
+            market = "Cardmarket" + symbol
+            currency = "€"
+        else:
+            market = "MTGO"
+            currency = "TIX"
+
+        rows.append(f"{market}: {price}{currency}")
+
+    return "\n".join(rows)
+
+
+def _send_single_result(chat_id: int, image: Optional[str], prices: Optional[Prices]):
+    telegram = tg_client.cached_telegram_client()
+
+    if image:
+        photo = SendPhoto(chat_id=chat_id, photo=image)
+        if prices:
+            photo["caption"] = _textify_prices(prices)
+        telegram.send_photo(photo)
+    elif prices:
+        telegram.send_message(
+            SendMessage(chat_id=chat_id, text=_textify_prices(prices))
+        )
+
+
+def _send_multiple_results(
+    chat_id: int, results: List[Tuple[Optional[str], Optional[Prices]]]
+):
+    telegram = tg_client.cached_telegram_client()
+
+    media = []
+    for img, prices in results:
+        photo = InputMediaPhoto(type="photo", media=img or "")
+        if prices:
+            photo["caption"] = _textify_prices(prices)
+        media.append(photo)
+
+    telegram.send_media_group(SendMediaGroup(chat_id=chat_id, media=media))
+
+
 def handle_plaintext(text: str, msg: Message):
-    results = []
+    results: List[Tuple[Optional[str], Optional[Prices]]] = []
 
     # Find up to 10 matches in the text:
     for match in islice(_PATTERN.finditer(text), 0, 10):
         q, set_code = match.group(1, 2)
-        res = scryfall.single_card_image_with_search_fallback(q, set_code)
+        fetch_price = False
+
+        if q.startswith("$") or q.startswith("€"):
+            fetch_price = True
+            q = q.lstrip("$€").lstrip()
+
+        res = scryfall.single_card_with_search_fallback(q, set_code)
+
         if res:
-            results.append(res)
+            img = scryfall.image_for_card(res, q)
+            prices = res["prices"] if fetch_price else None
+            if img or prices:
+                results.append((img, prices))
 
     if not results:
         return
 
-    telegram = tg_client.cached_telegram_client()
-
     if len(results) == 1:
-        telegram.send_photo(SendPhoto(chat_id=msg["chat"]["id"], photo=results[0]))
+        _send_single_result(msg["chat"]["id"], *results[0])
     else:
-        telegram.send_media_group(
-            SendMediaGroup(
-                chat_id=msg["chat"]["id"],
-                media=[InputMediaPhoto(type="photo", media=p) for p in results],
-            )
-        )
+        _send_multiple_results(msg["chat"]["id"], results)
 
 
 def handle_entities(text: str, entities: List[MessageEntity], msg: Message):
@@ -73,6 +129,10 @@ def handle_entities(text: str, entities: List[MessageEntity], msg: Message):
                     text=_CMD_START_TXT,
                 )
             )
+        elif cmd_text == "/chatid":
+            telegram.send_message(
+                SendMessage(chat_id=msg["chat"]["id"], text=str(msg["chat"]["id"]))
+            )
 
 
 _CMD_START_TXT = """
@@ -80,10 +140,14 @@ Welcome to ScryfallBot!
 
 *Usage*
 ScryfallBot works in both _inline_ mode and in active mode.
+
 Inline mode means you just tag @ScryfallBot and start typing while the results show up above your keyboard.
 Tapping a result will send it in your chat. All Scryfall syntax is supported, for a full overview, see [the Scryfall syntax docs](https://scryfall.com/docs/syntax)
+
 Active mode means you can add ScryfallBot to a chat and look up cards by typing [[ your card here ]] in chat.
+The bot will search up to 10 cards per message.
 You can find specific printings or limit the search to a set by adding the set code like this: [[ my card lookup | SET ]].
+If you start the query with a '$' or '€' sign, the bot will include price information about the card: [[ $ nyx-fleece ]].
 
 NOTE: Currently, the bot needs to be an admin in your chat in order to see messages without being explicitly mentioned...
 
