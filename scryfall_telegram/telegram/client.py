@@ -3,7 +3,14 @@ from functools import lru_cache
 
 import requests
 
-from .models import AnswerInlineQuery, SendMediaGroup, SendMessage, SendPhoto
+from .models import (
+    AnswerInlineQuery,
+    EditMessageMedia,
+    EditMessageReplyMarkup,
+    SendMediaGroup,
+    SendMessage,
+    SendPhoto,
+)
 
 _BASE_URL = "https://api.telegram.org/"
 
@@ -38,4 +45,14 @@ class TelegramClient:
     def send_media_group(self, message: SendMediaGroup):
         return self.session.post(
             _BASE_URL + _bot_token() + "/sendMediaGroup", json=message
+        )
+
+    def edit_message_reply_markup(self, reply_markup: EditMessageReplyMarkup):
+        return self.session.post(
+            _BASE_URL + _bot_token() + "/editMessageReplyMarkup", json=reply_markup
+        )
+
+    def edit_message_media(self, edit: EditMessageMedia):
+        return self.session.post(
+            _BASE_URL + _bot_token() + "/editMessageMedia", json=edit
         )

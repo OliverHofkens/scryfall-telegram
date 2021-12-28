@@ -6,6 +6,8 @@ from .scryfall import service as scryfall
 from .scryfall.models import Prices
 from .telegram import client as tg_client
 from .telegram.models import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
     InputMediaPhoto,
     Message,
     MessageEntity,
@@ -51,17 +53,32 @@ def _textify_prices(prices: Prices) -> str:
     return "\n".join(rows)
 
 
-def _send_single_result(chat_id: int, image: Optional[str], prices: Optional[Prices]):
+def _send_single_result(
+    chat_id: int, image: Optional[str], prices: Optional[Prices], orig_query: str
+):
     telegram = tg_client.cached_telegram_client()
 
+    # Propose an alternate search in an inline keyboard:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Meant something else?", callback_data=orig_query
+                )
+            ]
+        ]
+    )
+
     if image:
-        photo = SendPhoto(chat_id=chat_id, photo=image)
+        photo = SendPhoto(chat_id=chat_id, photo=image, reply_markup=keyboard)
         if prices:
             photo["caption"] = _textify_prices(prices)
         telegram.send_photo(photo)
     elif prices:
         telegram.send_message(
-            SendMessage(chat_id=chat_id, text=_textify_prices(prices))
+            SendMessage(
+                chat_id=chat_id, text=_textify_prices(prices), reply_markup=keyboard
+            )
         )
 
 
@@ -104,7 +121,10 @@ def handle_plaintext(text: str, msg: Message):
         return
 
     if len(results) == 1:
-        _send_single_result(msg["chat"]["id"], *results[0])
+        orig_query = q
+        if set_code:
+            orig_query += " s:{set_code}"
+        _send_single_result(msg["chat"]["id"], *results[0], orig_query)
     else:
         _send_multiple_results(msg["chat"]["id"], results)
 

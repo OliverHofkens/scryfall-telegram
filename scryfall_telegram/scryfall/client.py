@@ -16,12 +16,17 @@ class ScryfallClient:
         self.session = requests.Session()
 
     def search_cards(
-        self, query: str, order: Optional[str] = None, page: Optional[int] = 1
+        self,
+        query: str,
+        unique: Optional[str] = "cards",
+        order: Optional[str] = None,
+        page: Optional[int] = 1,
     ):
         return self.session.get(
             _BASE_URL + "/cards/search",
             params={
                 "q": query,
+                "unique": unique,
                 "order": order,
                 "page": page,
                 "include_multilingual": "true",
@@ -32,3 +37,6 @@ class ScryfallClient:
         return self.session.get(
             _BASE_URL + "/cards/named", params={"fuzzy": fuzzy_name, "set": set_code}
         )
+
+    def card_by_id(self, card_id: str):
+        return self.session.get(_BASE_URL + f"/cards/{card_id}")

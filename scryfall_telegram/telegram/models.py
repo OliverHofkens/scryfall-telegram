@@ -56,11 +56,25 @@ InlineQuery = TypedDict(
     "InlineQuery", {"id": str, "from": User, "query": str, "offset": str}
 )
 
+CallbackQuery = TypedDict(
+    "CallbackQuery",
+    {
+        "id": str,
+        "from": User,
+        "message": Optional[Message],
+        "inline_message_id": Optional[str],
+        "chat_instance": str,
+        "data": Optional[str],
+        "game_short_name": Optional[str],
+    },
+)
+
 
 class TelegramUpdate(TypedDict):
     update_id: int
     message: Optional[Message]
     inline_query: Optional[InlineQuery]
+    callback_query: Optional[CallbackQuery]
 
 
 class InputTextMessageContent(TypedDict):
@@ -168,3 +182,15 @@ class InputMediaPhoto(TypedDict, total=False):
 class SendMediaGroup(TypedDict):
     chat_id: int
     media: List[InputMediaPhoto]
+
+
+class EditMessageReplyMarkup(TypedDict):
+    chat_id: int
+    message_id: int
+    reply_markup: Optional[ReplyMarkup]
+
+
+class EditMessageMedia(TypedDict):
+    chat_id: int
+    message_id: int
+    media: InputMediaPhoto

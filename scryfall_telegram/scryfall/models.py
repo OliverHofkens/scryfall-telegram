@@ -23,3 +23,5 @@ class Card(TypedDict):
     image_uris: Optional[Dict[str, str]]
     card_faces: Optional[List[Face]]
     prices: Prices
+    set: str
+    frame_effects: Optional[List]

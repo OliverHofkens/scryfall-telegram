@@ -37,16 +37,3 @@ def test_get_split_cards_by_name(names):
     for res in results:
         assert res
         assert res == results[0]
-
-
-@pytest.mark.parametrize(
-    "name, set_code",
-    [
-        ("nyx", None),
-        ("gatstaf", None),
-        ("gatstaf", "SOI"),
-    ],
-)
-def test_get_card_with_fallback(name, set_code):
-    res = service.single_card_image_with_search_fallback(name, set_code)
-    assert res
