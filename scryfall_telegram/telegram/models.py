@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, TypedDict
+from typing import List, Literal, Optional, TypedDict, Union
 
 PARSE_MODE = Literal["Markdown", "HTML"]
 
@@ -56,11 +56,25 @@ InlineQuery = TypedDict(
     "InlineQuery", {"id": str, "from": User, "query": str, "offset": str}
 )
 
+CallbackQuery = TypedDict(
+    "CallbackQuery",
+    {
+        "id": str,
+        "from": User,
+        "message": Optional[Message],
+        "inline_message_id": Optional[str],
+        "chat_instance": str,
+        "data": Optional[str],
+        "game_short_name": Optional[str],
+    },
+)
+
 
 class TelegramUpdate(TypedDict):
     update_id: int
     message: Optional[Message]
     inline_query: Optional[InlineQuery]
+    callback_query: Optional[CallbackQuery]
 
 
 class InputTextMessageContent(TypedDict):
@@ -84,11 +98,66 @@ class AnswerInlineQuery(TypedDict):
     results: List[InlineQueryResultArticle]
 
 
+class LoginUrl(TypedDict, total=False):
+    url: str
+    forward_text: Optional[str]
+    bot_username: Optional[str]
+    request_write_access: Optional[bool]
+
+
+class InlineKeyboardButton(TypedDict, total=False):
+    text: str
+    url: Optional[str]
+    login_url: Optional[LoginUrl]
+    callback_data: Optional[str]
+    switch_inline_query: Optional[str]
+    switch_inline_query_current_chat: Optional[str]
+
+
+class KeyboardButton(TypedDict, total=False):
+    text: str
+    request_contact: Optional[bool]
+    request_location: Optional[bool]
+
+
+class InlineKeyboardMarkup(TypedDict):
+    inline_keyboard: List[List[InlineKeyboardButton]]
+
+
+class ReplyKeyboardMarkup(TypedDict, total=False):
+    keyboard: List[List[KeyboardButton]]
+    resize_keyboard: Optional[bool]
+    one_time_keyboard: Optional[bool]
+    input_field_placeholder: Optional[str]
+    selective: Optional[bool]
+
+
+class ReplyKeyboardRemove(TypedDict, total=False):
+    remove_keyboard: Literal[True]
+    selective: Optional[bool]
+
+
+class ForceReply(TypedDict, total=False):
+    force_reply: Literal[True]
+    input_field_placeholder: Optional[str]
+    selective: Optional[bool]
+
+
+ReplyMarkup = Union[
+    InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply
+]
+
+
 class SendMessage(TypedDict, total=False):
     chat_id: int
     text: str
     parse_mode: Optional[PARSE_MODE]
+    entities: Optional[List[MessageEntity]]
     disable_web_page_preview: Optional[bool]
+    disable_notification: Optional[bool]
+    reply_to_message_id: Optional[int]
+    allow_sending_without_reply: Optional[bool]
+    reply_markup: Optional[ReplyMarkup]
 
 
 class SendPhoto(TypedDict, total=False):
@@ -96,6 +165,11 @@ class SendPhoto(TypedDict, total=False):
     photo: str
     caption: Optional[str]
     parse_mode: Optional[PARSE_MODE]
+    caption_entities: Optional[List[MessageEntity]]
+    disable_notification: Optional[bool]
+    reply_to_message_id: Optional[int]
+    allow_sending_without_reply: Optional[bool]
+    reply_markup: Optional[ReplyMarkup]
 
 
 class InputMediaPhoto(TypedDict, total=False):
@@ -108,3 +182,16 @@ class InputMediaPhoto(TypedDict, total=False):
 class SendMediaGroup(TypedDict):
     chat_id: int
     media: List[InputMediaPhoto]
+
+
+class EditMessageReplyMarkup(TypedDict):
+    chat_id: int
+    message_id: int
+    reply_markup: Optional[ReplyMarkup]
+
+
+class EditMessageMedia(TypedDict, total=False):
+    chat_id: int
+    message_id: int
+    media: InputMediaPhoto
+    reply_markup: Optional[ReplyMarkup]

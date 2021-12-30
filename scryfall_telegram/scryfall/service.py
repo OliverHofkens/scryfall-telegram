@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Dict, List, Optional
 
 import orjson
@@ -7,8 +8,9 @@ from .client import cached_scryfall_client
 from .models import Card, Face
 
 
-def search_cards(query: str) -> List[Card]:
-    resp = cached_scryfall_client().search_cards(query, "name")
+@lru_cache(25)
+def search_cards(query: str, unique: Optional[str] = "cards") -> List[Card]:
+    resp = cached_scryfall_client().search_cards(query, unique, "name")
 
     if resp.status_code == 404:
         return []
@@ -18,8 +20,21 @@ def search_cards(query: str) -> List[Card]:
     return body["data"]
 
 
+@lru_cache(25)
 def single_card(fuzzy_name: str, set_code: Optional[str] = None) -> Optional[Card]:
     resp = cached_scryfall_client().named_card(fuzzy_name, set_code)
+
+    if resp.status_code == 404:
+        return None
+
+    resp.raise_for_status()
+
+    return orjson.loads(resp.content)
+
+
+@lru_cache(25)
+def single_card_by_id(card_id: str) -> Optional[Card]:
+    resp = cached_scryfall_client().card_by_id(card_id)
 
     if resp.status_code == 404:
         return None
@@ -49,15 +64,6 @@ def single_card_with_search_fallback(
     hits = search_cards(full_query)
     if hits:
         return hits[0]
-    return None
-
-
-def single_card_image_with_search_fallback(
-    query: str, set_code: Optional[str] = None
-) -> Optional[str]:
-    card = single_card_with_search_fallback(query, set_code)
-    if card:
-        return image_for_card(card, query)
     return None
 
 
