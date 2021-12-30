@@ -2,12 +2,12 @@ import re
 from itertools import islice
 from typing import List, Optional, Tuple
 
+from .keyboard import initial_suggest_keyboard
+from .query import Query
 from .scryfall import service as scryfall
 from .scryfall.models import Prices
 from .telegram import client as tg_client
 from .telegram.models import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
     InputMediaPhoto,
     Message,
     MessageEntity,
@@ -54,21 +54,11 @@ def _textify_prices(prices: Prices) -> str:
 
 
 def _send_single_result(
-    chat_id: int, image: Optional[str], prices: Optional[Prices], orig_query: str
+    chat_id: int, image: Optional[str], prices: Optional[Prices], orig_query: Query
 ):
     telegram = tg_client.cached_telegram_client()
 
-    # Propose an alternate search in an inline keyboard:
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="Meant something else?", callback_data=orig_query
-                )
-            ]
-        ]
-    )
-
+    keyboard = initial_suggest_keyboard(orig_query)
     if image:
         photo = SendPhoto(chat_id=chat_id, photo=image, reply_markup=keyboard)
         if prices:
@@ -102,18 +92,12 @@ def handle_plaintext(text: str, msg: Message):
 
     # Find up to 10 matches in the text:
     for match in islice(_PATTERN.finditer(text), 0, 10):
-        q, set_code = match.group(1, 2)
-        fetch_price = False
-
-        if q.startswith("$") or q.startswith("€"):
-            fetch_price = True
-            q = q.lstrip("$€").lstrip()
-
-        res = scryfall.single_card_with_search_fallback(q, set_code)
+        q = Query.from_telegram_query(*match.group(1, 2))
+        res = scryfall.single_card_with_search_fallback(q.free_text, q.set_code)
 
         if res:
-            img = scryfall.image_for_card(res, q)
-            prices = res["prices"] if fetch_price else None
+            img = scryfall.image_for_card(res, q.free_text)
+            prices = res["prices"] if q.price_request else None
             if img or prices:
                 results.append((img, prices))
 
@@ -121,10 +105,7 @@ def handle_plaintext(text: str, msg: Message):
         return
 
     if len(results) == 1:
-        orig_query = q
-        if set_code:
-            orig_query += " s:{set_code}"
-        _send_single_result(msg["chat"]["id"], *results[0], orig_query)
+        _send_single_result(msg["chat"]["id"], *results[0], q)
     else:
         _send_multiple_results(msg["chat"]["id"], results)
 

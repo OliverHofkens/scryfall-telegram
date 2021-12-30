@@ -17,6 +17,7 @@ class Face(TypedDict):
 class Card(TypedDict):
     id: str
     name: str
+    lang: str
     type_line: str
     oracle_text: Optional[str]
     scryfall_uri: str
@@ -24,4 +25,6 @@ class Card(TypedDict):
     card_faces: Optional[List[Face]]
     prices: Prices
     set: str
+    full_art: bool
     frame_effects: Optional[List]
+    promo_types: Optional[List]

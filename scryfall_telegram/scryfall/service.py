@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Dict, List, Optional
 
 import orjson
@@ -7,6 +8,7 @@ from .client import cached_scryfall_client
 from .models import Card, Face
 
 
+@lru_cache(25)
 def search_cards(query: str, unique: Optional[str] = "cards") -> List[Card]:
     resp = cached_scryfall_client().search_cards(query, unique, "name")
 
@@ -18,6 +20,7 @@ def search_cards(query: str, unique: Optional[str] = "cards") -> List[Card]:
     return body["data"]
 
 
+@lru_cache(25)
 def single_card(fuzzy_name: str, set_code: Optional[str] = None) -> Optional[Card]:
     resp = cached_scryfall_client().named_card(fuzzy_name, set_code)
 
@@ -29,6 +32,7 @@ def single_card(fuzzy_name: str, set_code: Optional[str] = None) -> Optional[Car
     return orjson.loads(resp.content)
 
 
+@lru_cache(25)
 def single_card_by_id(card_id: str) -> Optional[Card]:
     resp = cached_scryfall_client().card_by_id(card_id)
 
@@ -44,13 +48,6 @@ def single_card_image(fuzzy_name: str, set_code: Optional[str] = None) -> Option
     card = single_card(fuzzy_name, set_code)
     if card:
         return image_for_card(card, fuzzy_name)
-    return None
-
-
-def single_card_image_by_id(card_id: str) -> Optional[str]:
-    card = single_card_by_id(card_id)
-    if card:
-        return image_for_card(card, card["name"])
     return None
 
 

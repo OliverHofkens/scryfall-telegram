@@ -190,7 +190,8 @@ class EditMessageReplyMarkup(TypedDict):
     reply_markup: Optional[ReplyMarkup]
 
 
-class EditMessageMedia(TypedDict):
+class EditMessageMedia(TypedDict, total=False):
     chat_id: int
     message_id: int
     media: InputMediaPhoto
+    reply_markup: Optional[ReplyMarkup]
