@@ -93,7 +93,9 @@ def handle_plaintext(text: str, msg: Message):
     # Find up to 10 matches in the text:
     for match in islice(_PATTERN.finditer(text), 0, 10):
         q = Query.from_telegram_query(*match.group(1, 2))
-        res = scryfall.single_card_with_search_fallback(q.free_text, q.set_code)
+        res = scryfall.single_card_with_search_fallback(
+            q.free_text or q.to_scryfall_query(), q.set_code
+        )
 
         if res:
             img = scryfall.image_for_card(res, q.free_text)
