@@ -5,6 +5,7 @@ from .telegram.models import (
     AnswerInlineQuery,
     InlineQuery,
     InlineQueryResultArticle,
+    InlineQueryResultPhoto,
     InputTextMessageContent,
 )
 
@@ -18,7 +19,7 @@ def handle_inline_query(query: InlineQuery):
 
     response = AnswerInlineQuery(
         inline_query_id=query["id"],
-        results=[scryfall_card_to_inline_query_article(c) for c in results[:50]],
+        results=[scryfall_card_to_inline_query_photo(c) for c in results[:50]],
     )
 
     telegram = tg.cached_telegram_client()
@@ -40,4 +41,25 @@ def scryfall_card_to_inline_query_article(card: Card) -> InlineQueryResultArticl
         input_message_content=InputTextMessageContent(
             message_text=card["scryfall_uri"], disable_web_page_preview=False
         ),
+    )
+
+
+def scryfall_card_to_inline_query_photo(card: Card) -> InlineQueryResultPhoto:
+    img = card.get("image_uris", {}) or {}
+    # TODO: Find a better hosted fallback or host ourselves?
+    fallback_img = (
+        "https://gamepedia.cursecdn.com/mtgsalvation_gamepedia/f/f8/Magic_card_back.jpg"
+    )
+
+    return InlineQueryResultPhoto(
+        type="photo",
+        id=card["id"],
+        title=card["name"],
+        photo_url=img.get("large", fallback_img),
+        thumb_url=img.get("small", fallback_img),
+        # https://scryfall.com/docs/api/images
+        photo_width=672,
+        photo_height=936,
+        caption=f"[Details on Scryfall.com]({card['scryfall_uri']})",
+        parse_mode="Markdown",
     )

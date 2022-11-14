@@ -1,6 +1,6 @@
 from typing import List, Literal, Optional, TypedDict, Union
 
-PARSE_MODE = Literal["Markdown", "HTML"]
+PARSE_MODE = Literal["Markdown", "MarkdownV2", "HTML"]
 
 
 class User(TypedDict):
@@ -83,7 +83,7 @@ class InputTextMessageContent(TypedDict):
 
 
 class InlineQueryResultArticle(TypedDict):
-    type: str
+    type: Literal["article"]
     id: str
     title: str
     input_message_content: InputTextMessageContent
@@ -93,9 +93,23 @@ class InlineQueryResultArticle(TypedDict):
     hide_url: Optional[bool]
 
 
+class InlineQueryResultPhoto(TypedDict, total=False):
+    type: Literal["photo"]
+    id: str
+    photo_url: str
+    thumb_url: str
+    photo_width: Optional[int]
+    photo_height: Optional[int]
+    title: Optional[str]
+    description: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[PARSE_MODE]
+    reply_markup: Optional["ReplyMarkup"]
+
+
 class AnswerInlineQuery(TypedDict):
     inline_query_id: str
-    results: List[InlineQueryResultArticle]
+    results: Union[List[InlineQueryResultArticle], List[InlineQueryResultPhoto]]
 
 
 class LoginUrl(TypedDict, total=False):
