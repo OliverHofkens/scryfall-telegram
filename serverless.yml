@@ -14,9 +14,10 @@ custom:
 
 provider:
     name: aws
-    runtime: python3.8
+    runtime: python3.9
     region: eu-west-1
     memorySize: 128
+    architecture: arm64
     timeout: 25
     stage: staging
 

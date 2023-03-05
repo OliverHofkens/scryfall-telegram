@@ -8,22 +8,22 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 pyxDamerauLevenshtein = "1.7"
 orjson = "^3.8"
 requests = "^2.28"
 
-black = { version = "^22.10", optional = true }
+black = { version = "^23.1", optional = true }
 bump2version = { version = "^1.0.1", optional = true }
-flake8 = { version = "^3.8", optional = true }
-isort = { version = "^5.10", optional = true }
-mypy = { version = "^0.982", optional = true }
+flake8 = { version = "^6.0", optional = true }
+isort = { version = "^5.12", optional = true }
+mypy = { version = "^1", optional = true }
 pytest = { version = "^7.2", optional = true }
 pytest-cov = { version = "*", optional = true }
 types-requests = { version = "*", optional = true }
-vulture = { version = "^2.6", optional = true }
-yamllint = { version = "^1.28.0", optional = true }
+vulture = { version = "^2.7", optional = true }
+yamllint = { version = "^1.29.0", optional = true }
 
 [tool.poetry.extras]
 dev = ["bump2version"]
