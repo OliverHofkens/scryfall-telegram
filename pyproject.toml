@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scryfall-telegram"
-version = "2.3.0"
+version = "2.4.0"
 description = ""
 authors = ["Oliver Hofkens <oli.hofkens@gmail.com>"]
 packages = [
