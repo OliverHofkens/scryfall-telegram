@@ -54,26 +54,40 @@ def _textify_prices(prices: Prices) -> str:
 
 
 def _send_single_result(
-    chat_id: int, image: Optional[str], prices: Optional[Prices], orig_query: Query
+    chat_id: int,
+    thread_id: Optional[int],
+    image: Optional[str],
+    prices: Optional[Prices],
+    orig_query: Query,
 ):
     telegram = tg_client.cached_telegram_client()
 
     keyboard = initial_suggest_keyboard(orig_query)
     if image:
-        photo = SendPhoto(chat_id=chat_id, photo=image, reply_markup=keyboard)
+        photo = SendPhoto(
+            chat_id=chat_id,
+            message_thread_id=thread_id,
+            photo=image,
+            reply_markup=keyboard,
+        )
         if prices:
             photo["caption"] = _textify_prices(prices)
         telegram.send_photo(photo)
     elif prices:
         telegram.send_message(
             SendMessage(
-                chat_id=chat_id, text=_textify_prices(prices), reply_markup=keyboard
+                chat_id=chat_id,
+                message_thread_id=thread_id,
+                text=_textify_prices(prices),
+                reply_markup=keyboard,
             )
         )
 
 
 def _send_multiple_results(
-    chat_id: int, results: List[Tuple[Optional[str], Optional[Prices]]]
+    chat_id: int,
+    thread_id: Optional[int],
+    results: List[Tuple[Optional[str], Optional[Prices]]],
 ):
     telegram = tg_client.cached_telegram_client()
 
@@ -84,7 +98,9 @@ def _send_multiple_results(
             photo["caption"] = _textify_prices(prices)
         media.append(photo)
 
-    telegram.send_media_group(SendMediaGroup(chat_id=chat_id, media=media))
+    telegram.send_media_group(
+        SendMediaGroup(chat_id=chat_id, message_thread_id=thread_id, media=media)
+    )
 
 
 def handle_plaintext(text: str, msg: Message):
@@ -107,9 +123,11 @@ def handle_plaintext(text: str, msg: Message):
         return
 
     if len(results) == 1:
-        _send_single_result(msg["chat"]["id"], *results[0], q)
+        _send_single_result(
+            msg["chat"]["id"], msg.get("message_thread_id"), *results[0], q
+        )
     else:
-        _send_multiple_results(msg["chat"]["id"], results)
+        _send_multiple_results(msg["chat"]["id"], msg.get("message_thread_id"), results)
 
 
 def handle_entities(text: str, entities: List[MessageEntity], msg: Message):
@@ -127,6 +145,7 @@ def handle_entities(text: str, entities: List[MessageEntity], msg: Message):
             telegram.send_message(
                 SendMessage(
                     chat_id=msg["chat"]["id"],
+                    message_thread_id=msg.get("message_thread_id"),
                     parse_mode="Markdown",
                     disable_web_page_preview=True,
                     text=_CMD_START_TXT,
@@ -134,7 +153,11 @@ def handle_entities(text: str, entities: List[MessageEntity], msg: Message):
             )
         elif cmd_text == "/chatid":
             telegram.send_message(
-                SendMessage(chat_id=msg["chat"]["id"], text=str(msg["chat"]["id"]))
+                SendMessage(
+                    chat_id=msg["chat"]["id"],
+                    message_thread_id=msg.get("message_thread_id"),
+                    text=str(msg["chat"]["id"]),
+                )
             )
 
 

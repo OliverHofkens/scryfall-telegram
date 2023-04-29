@@ -45,6 +45,7 @@ Message = TypedDict(
         "date": int,
         "chat": Chat,
         "message_id": int,
+        "message_thread_id": Optional[int],
         "from": User,
         "text": Optional[str],
         "entities": Optional[List[MessageEntity]],
@@ -73,6 +74,7 @@ CallbackQuery = TypedDict(
 class TelegramUpdate(TypedDict):
     update_id: int
     message: Optional[Message]
+    channel_post: Optional[Message]
     inline_query: Optional[InlineQuery]
     callback_query: Optional[CallbackQuery]
 
@@ -150,6 +152,7 @@ ReplyMarkup = Union[
 
 class SendMessage(TypedDict, total=False):
     chat_id: int
+    message_thread_id: Optional[int]
     text: str
     parse_mode: Optional[PARSE_MODE]
     entities: Optional[List[MessageEntity]]
@@ -162,6 +165,7 @@ class SendMessage(TypedDict, total=False):
 
 class SendPhoto(TypedDict, total=False):
     chat_id: int
+    message_thread_id: Optional[int]
     photo: str
     caption: Optional[str]
     parse_mode: Optional[PARSE_MODE]
@@ -181,6 +185,7 @@ class InputMediaPhoto(TypedDict, total=False):
 
 class SendMediaGroup(TypedDict):
     chat_id: int
+    message_thread_id: Optional[int]
     media: List[InputMediaPhoto]
 
 

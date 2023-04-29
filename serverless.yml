@@ -23,6 +23,7 @@ provider:
 
     environment:
         TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN_${self:custom.environments.${self:custom.currentStage}}}
+        STAGE: ${self:custom.currentStage}
 
 plugins:
     - serverless-python-requirements
