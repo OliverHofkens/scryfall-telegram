@@ -34,7 +34,7 @@ def scryfall_card_to_inline_query_article(card: Card) -> InlineQueryResultArticl
         id=card["id"],
         title=card["name"],
         url=card["scryfall_uri"],
-        description=card.get("oracle_text", card["type_line"]),
+        description=card.get("oracle_text") or card.get("type_line"),
         thumb_url=thumbnail,
         hide_url=True,
         input_message_content=InputTextMessageContent(

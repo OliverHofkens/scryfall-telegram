@@ -1,5 +1,7 @@
 from typing import cast
 
+import structlog
+
 from .keyboard import alternatives_keyboard
 from .query import Query
 from .scryfall import service as scryfall
@@ -13,6 +15,8 @@ from .telegram.models import (
 )
 from .textmessage import _textify_prices
 
+log = structlog.get_logger()
+
 
 def handle_callback_query(query: CallbackQuery):
     try:
@@ -22,6 +26,7 @@ def handle_callback_query(query: CallbackQuery):
         raise ValueError(f"Received unexpected callback query: {query}")
 
     tg_query = Query.from_telegram_query(cast(str, data), None)
+    log.debug("reconstructed_query", query=str(tg_query))
     if "c" in tg_query.private_params:
         card_selected(cast(Message, msg), tg_query)
     else:

@@ -2,7 +2,9 @@ from functools import lru_cache
 from typing import Optional
 
 import requests
+import structlog
 
+log = structlog.get_logger()
 _BASE_URL = "https://api.scryfall.com"
 
 
@@ -15,6 +17,11 @@ class ScryfallClient:
     def __init__(self):
         self.session = requests.Session()
 
+    def _get(self, url: str, **params):
+        resp = self.session.get(_BASE_URL + url, params=params)
+        log.debug("scryfall_response", url=url, params=params, status=resp.status_code)
+        return resp
+
     def search_cards(
         self,
         query: str,
@@ -22,21 +29,17 @@ class ScryfallClient:
         order: Optional[str] = None,
         page: Optional[int] = 1,
     ):
-        return self.session.get(
-            _BASE_URL + "/cards/search",
-            params={
-                "q": query,
-                "unique": unique,
-                "order": order,
-                "page": page,
-                "include_multilingual": "true",
-            },
+        return self._get(
+            "/cards/search",
+            q=query,
+            unique=unique,
+            order=order,
+            page=page,
+            include_multilingual="true",
         )
 
     def named_card(self, fuzzy_name: str, set_code: Optional[str] = None):
-        return self.session.get(
-            _BASE_URL + "/cards/named", params={"fuzzy": fuzzy_name, "set": set_code}
-        )
+        return self._get("/cards/named", fuzzy=fuzzy_name, set=set_code)
 
     def card_by_id(self, card_id: str):
-        return self.session.get(_BASE_URL + f"/cards/{card_id}")
+        return self._get(f"/cards/{card_id}")

@@ -2,6 +2,7 @@ import os
 
 import pytest
 
+from scryfall_telegram.logging import setup_logging
 from scryfall_telegram.telegram.client import cached_telegram_client
 
 
@@ -11,6 +12,11 @@ def _env_or_skip(var_name: str):
     except KeyError:
         pytest.skip(f"{var_name} missing from env.")
     return var
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _setup_logging():
+    setup_logging()
 
 
 @pytest.fixture()

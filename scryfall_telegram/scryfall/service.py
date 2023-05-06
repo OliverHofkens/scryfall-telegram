@@ -2,10 +2,13 @@ from functools import lru_cache
 from typing import Dict, List, Optional
 
 import orjson
+import structlog
 from pyxdameraulevenshtein import damerau_levenshtein_distance
 
 from .client import cached_scryfall_client
 from .models import Card, Face
+
+log = structlog.get_logger()
 
 
 @lru_cache(25)
@@ -14,6 +17,7 @@ def search_cards(query: str, unique: Optional[str] = "cards") -> List[Card]:
 
     if resp.status_code == 404:
         return []
+
     resp.raise_for_status()
 
     body = orjson.loads(resp.content)
