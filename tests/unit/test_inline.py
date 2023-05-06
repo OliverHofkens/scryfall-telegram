@@ -15,4 +15,4 @@ def test_scryfall_card_to_inline_query_article():
         prices={"eur": "666.99"},
     )
 
-    assert scryfall_card_to_inline_query_article(card)
+    assert scryfall_card_to_inline_query_article(card, "Nyx")

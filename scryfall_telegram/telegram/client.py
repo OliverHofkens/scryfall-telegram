@@ -2,6 +2,7 @@ import os
 from functools import lru_cache
 
 import requests
+import structlog
 
 from .models import (
     AnswerInlineQuery,
@@ -12,6 +13,7 @@ from .models import (
     SendPhoto,
 )
 
+log = structlog.get_logger()
 _BASE_URL = "https://api.telegram.org/"
 
 
@@ -29,30 +31,31 @@ class TelegramClient:
     def __init__(self):
         self.session = requests.Session()
 
+    def _post(self, url: str, body: dict):
+        resp = self.session.post(_BASE_URL + _bot_token() + url, json=body)
+        log.debug("telegram_response", url=url, body=body, status=resp.status_code)
+
+        try:
+            resp.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            log.error("http_error", body=e.response.text)
+
+        return resp
+
     def answer_inline_query(self, answer: AnswerInlineQuery):
-        return self.session.post(
-            _BASE_URL + _bot_token() + "/answerInlineQuery", json=answer
-        )
+        return self._post("/answerInlineQuery", answer)
 
     def send_message(self, message: SendMessage):
-        return self.session.post(
-            _BASE_URL + _bot_token() + "/sendMessage", json=message
-        )
+        return self._post("/sendMessage", message)
 
     def send_photo(self, message: SendPhoto):
-        return self.session.post(_BASE_URL + _bot_token() + "/sendPhoto", json=message)
+        return self._post("/sendPhoto", message)
 
     def send_media_group(self, message: SendMediaGroup):
-        return self.session.post(
-            _BASE_URL + _bot_token() + "/sendMediaGroup", json=message
-        )
+        return self._post("/sendMediaGroup", message)
 
     def edit_message_reply_markup(self, reply_markup: EditMessageReplyMarkup):
-        return self.session.post(
-            _BASE_URL + _bot_token() + "/editMessageReplyMarkup", json=reply_markup
-        )
+        return self._post("/editMessageReplyMarkup", reply_markup)
 
     def edit_message_media(self, edit: EditMessageMedia):
-        return self.session.post(
-            _BASE_URL + _bot_token() + "/editMessageMedia", json=edit
-        )
+        return self._post("/editMessageMedia", edit)

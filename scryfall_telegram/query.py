@@ -14,6 +14,9 @@ class Query:
         self.scryfall_params = scryfall_params
         self.private_params = private_params
 
+    def __str__(self) -> str:
+        return f"<free_text={self.free_text}, price_request={self.price_request}, scryfall_params={self.scryfall_params}, private_params={self.private_params}>"
+
     @classmethod
     def from_telegram_query(cls, q: str, set_code: Optional[str] = None) -> "Query":
         parts = q.split()

@@ -18,7 +18,8 @@ class Card(TypedDict):
     id: str
     name: str
     lang: str
-    type_line: str
+    # Supposedly not nullable, but sometimes `null` in reality
+    type_line: Optional[str]
     oracle_text: Optional[str]
     scryfall_uri: str
     image_uris: Optional[Dict[str, str]]
