@@ -34,6 +34,12 @@ class TelegramClient:
     def _post(self, url: str, body: dict):
         resp = self.session.post(_BASE_URL + _bot_token() + url, json=body)
         log.debug("telegram_response", url=url, body=body, status=resp.status_code)
+
+        try:
+            resp.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            log.error("http_error", body=e.response.text)
+
         return resp
 
     def answer_inline_query(self, answer: AnswerInlineQuery):
