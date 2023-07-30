@@ -1,5 +1,6 @@
 import os
 from functools import lru_cache
+from typing import Any
 
 import requests
 import structlog
@@ -31,7 +32,7 @@ class TelegramClient:
     def __init__(self):
         self.session = requests.Session()
 
-    def _post(self, url: str, body: dict):
+    def _post(self, url: str, body: Any):
         resp = self.session.post(_BASE_URL + _bot_token() + url, json=body)
         log.debug("telegram_response", url=url, body=body, status=resp.status_code)
 

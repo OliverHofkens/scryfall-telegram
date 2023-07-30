@@ -14,7 +14,7 @@ custom:
 
 provider:
     name: aws
-    runtime: python3.9
+    runtime: python3.11
     region: eu-west-1
     memorySize: 128
     architecture: arm64
