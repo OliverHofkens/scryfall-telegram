@@ -1,6 +1,6 @@
 ---
 service: scryfall-telegram
-configValidationMode: error
+configValidationMode: warn
 
 custom:
     currentStage: ${opt:stage, self:provider.stage}
