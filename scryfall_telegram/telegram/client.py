@@ -39,7 +39,7 @@ class TelegramClient:
         try:
             resp.raise_for_status()
         except requests.exceptions.RequestException as e:
-            log.error("http_error", body=e.response.text)
+            log.error("http_error", body=e.response.text if e.response else None)
 
         return resp
 
